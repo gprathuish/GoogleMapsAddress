@@ -1,0 +1,83 @@
+<div id="map" class="col-lg-6"></div>
+<div class="col-lg-6 well">
+<%= link_to "Add Map", new_welcome_path, class: "btn btn-success" %>	
+</div>
+
+<div class="col-lg-6">
+	<div id="show">
+		<ul class="list-group">
+			<li class="list-group-item"><strong>Name : </strong><span id="name"></span></li>
+			<li class="list-group-item"><strong>Phone : </strong><span id="phone"></span></li>
+		</ul>		
+	</div>
+</div>
+
+<script>
+	var map;
+	var marker;
+  var markers = [];
+
+	function initMap() {	
+		var myLatLng = {lat: 17.6883, lng: 83.2186};	
+	  // var myLatLng = {lat: 17.72121809544608, lng: 83.30331802368164};
+
+	  map = new google.maps.Map(document.getElementById('map'), {
+	    zoom: 12,
+	    zoomControl: true,
+	    center: myLatLng
+	  });
+
+	  getAllMaps();
+	}
+	
+	//To add all Markers to Map View
+	function getAllMaps(){		
+		$.getJSON('welcome/getlist.json',function(data){
+			for (i = 0; i < data.length; i++){ 			    
+		    marker = new google.maps.Marker({
+			    position: {lat: data[i].lat, lng: data[i].lng},
+			    map: map,
+			    id: data[i].id,
+			    name: data[i].name,
+			    phone: data[i].phone
+			  });					
+			  map.setCenter(marker.getPosition())			  
+				markers.push(marker);
+			}
+			setMarkers(map, markers);			
+		});
+	}
+
+	//To add on-click funtionality to the Marker
+	function setMarkers(map,locations){		
+  	var marker, i
+		for (i = 0; i < locations.length; i++)
+		{	
+			var marker = new google.maps.Marker({  
+        map: map, id: locations[i].id, name: locations[i].name, phone: locations[i].phone , position: {lat: locations[i].position.lat(), lng: locations[i].position.lng()}
+      });
+
+			var content = "Name: " + locations[i].name +  '<br>' + "Address: " +locations[i].phone
+		  // var infowindow = new google.maps.InfoWindow()
+			google.maps.event.addListener(marker,'click', (function(marker,content){ 
+	      return function() {
+	        // infowindow.setContent(content);
+	        // infowindow.open(map,marker);	        
+	        $('#name').text(marker.name);	       
+	        $('#phone').text(marker.phone);
+	        var a = document.createElement('a');
+					var linkText = document.createTextNode("Remove");
+					$('#show').find('a').remove();
+					a.appendChild(linkText);
+					a.title = "my title text";
+					a.href = "/welcome/"+marker.id;
+					a.class = "btn btn-danger";					
+					$(a).attr('data-method', 'delete');									
+					$('#show').append(a);
+					$('#show').find('a').addClass('btn btn-danger');	
+	      };
+		  })(marker,content)); 
+	 	}
+	}
+
+</script>

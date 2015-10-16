@@ -1,0 +1,106 @@
+<div id="map" class="col-lg-6"></div>
+<div class="col-lg-6 well">
+	<h1>Enter Details</h1>
+	<%= form_for @location, url: welcome_index_path, html: {class: 'form'} do |f| %>
+	  <div class="form-group">	    
+	    <div class="row">
+	    	<div class="col-lg-5">
+	    		<%= f.label :lat,'Lat' %>
+	    		<%= f.text_field :lat, class: 'form-control', placeholder: "Click on map at your location" %>
+	    	</div>
+	    	<div class="col-lg-5">
+	    		<%= f.label :lng,'Lng' %>
+	    		<%= f.text_field :lng, class: 'form-control', placeholder: "Click on map at your location" %>
+	    	</div>
+	    	<div class="col-lg-2"><input type="button" onclick="deleteMarkers();" value="Clear" class="btn btn-danger"></div>
+	    </div>
+	    
+	  </div>
+
+	  <div class="form-group">
+	    <%= f.label :name %>
+	    <%= f.text_field :name, class: 'form-control', placeholder: "Enter Name"%>	    
+	  </div>	
+
+	  <div class="form-group">
+	  	<%= f.label :phone %>
+	    <%= f.text_field :phone, class: 'form-control', placeholder: "Enter Phone"%>	    	    
+	  </div>	
+	  <%= f.submit %>
+	  
+	<% end %>
+</div>
+
+
+<!-- <div class="col-lg-6">
+	<div id="locationField">
+    <input id="autocomplete" placeholder="Enter your address" onFocus="geolocate()" type="text"></input>
+  </div>
+
+  <table id="address">
+    <tr>
+      <td class="label">Street address</td>
+      <td class="slimField"><input class="field" id="street_number" disabled="true"></input></td>
+      <td class="wideField" colspan="2"><input class="field" id="route" disabled="true"></input></td>
+    </tr>
+    <tr>
+      <td class="label">City</td>
+      <td class="wideField" colspan="3"><input class="field" id="locality" disabled="true"></input></td>
+    </tr>
+    <tr>
+      <td class="label">State</td>
+      <td class="slimField"><input class="field" id="administrative_area_level_1" disabled="true"></input></td>
+      <td class="label">Zip code</td>
+      <td class="wideField"><input class="field" id="postal_code" disabled="true"></input></td>
+    </tr>
+    <tr>
+      <td class="label">Country</td>
+      <td class="wideField" colspan="3"><input class="field" id="country" disabled="true"></input></td>
+    </tr>
+  </table>
+</div>
+
+ -->
+
+
+<script>
+	var map;
+	var marker;
+  var lists = [];
+
+	function initMap() {
+	  var myLatLng = {lat: 17.6883, lng: 83.2186};
+
+	  map = new google.maps.Map(document.getElementById('map'), {
+	    zoom: 15,
+	    zoomControl: true,
+	    center: myLatLng
+	  });
+
+	  marker = new google.maps.Marker({	   
+	    map: map,	    
+	  });
+
+	  //Create new marker on click
+	  google.maps.event.addListener(map, 'click', function(event) {
+		  clear();		  		  
+		  marker = new google.maps.Marker({position: {lat: event.latLng.lat(), lng: event.latLng.lng()}, map: map, name: "hi"});		  
+		  document.getElementById('location_lat').value = marker.position.lat();
+		  document.getElementById('location_lng').value = marker.position.lng();
+		});		
+	}
+
+	// Clear marker in the Map
+	function clear(){
+		marker.setMap(null);
+	}
+
+	// Clear the form Lat & Lng
+	function deleteMarkers() {	  	  
+		clear();
+	  document.getElementById('location_lat').value = "";
+		document.getElementById('location_lng').value = "";
+	}
+</script>
+
+
